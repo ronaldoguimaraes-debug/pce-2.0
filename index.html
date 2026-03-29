@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OficinaPro">
+<meta name="theme-color" content="#0E0E0E">
+<title>OficinaPro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;font-size:16px}
+body{font-family:'Figtree',sans-serif;background:#F4F2EE;color:#111;min-height:100%;overscroll-behavior:none}
+
+/* ─── TOKENS ─── */
+:root{
+  --brand:#E8610A;
+  --brand-d:#C44E05;
+  --brand-l:#FEF0E7;
+  --brand-mid:#F7A97A;
+  --ok:#1B7A3E;
+  --ok-bg:#E6F5EC;
+  --warn:#A05C00;
+  --warn-bg:#FFF3DC;
+  --danger:#C0281E;
+  --danger-bg:#FDECEA;
+  --info:#1355A0;
+  --info-bg:#E8F0FB;
+  --surface:#FFFFFF;
+  --surface2:#F4F2EE;
+  --surface3:#EAE7E2;
+  --border:#E2DDD7;
+  --border2:#CBC5BE;
+  --t1:#111111;
+  --t2:#555048;
+  --t3:#97918A;
+  --r:14px;
+  --rm:10px;
+  --rs:7px;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.14);
+}
+
+/* ─── LAYOUT SHELL ─── */
+.shell{display:flex;height:100vh;overflow:hidden;max-width:1200px;margin:0 auto;background:var(--surface)}
+
+/* ─── SIDEBAR (tablet landscape / desktop) ─── */
+.sidebar{width:220px;flex-shrink:0;background:#111;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:17px;font-weight:700;color:#fff;letter-spacing:-0.3px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px}
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
+.snav-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:var(--rm);cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,0.5);font-size:14px;font-weight:500;font-family:'Figtree',sans-serif;width:100%;text-align:left;transition:background .15s,color .15s}
+.snav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8)}
+.snav-item.active{background:var(--brand);color:#fff}
+.snav-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.snav-badge{margin-left:auto;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);font-size:10px;font-weight:600;padding:2px 7px;border-radius:99px}
+.snav-item.active .snav-badge{background:rgba(255,255,255,0.25);color:#fff}
+.sidebar-footer{padding:14px 10px;border-top:1px solid rgba(255,255,255,0.07)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rm);cursor:pointer}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:13px;font-weight:500;color:rgba(255,255,255,0.7)}
+.user-role{font-size:11px;color:rgba(255,255,255,0.3)}
+
+/* ─── MAIN CONTENT ─── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--surface2)}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:var(--rs)}
+.topbar-title{font-size:18px;font-weight:700;color:var(--t1)}
+.topbar-sub{font-size:13px;color:var(--t3);margin-left:12px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.btn-top{background:var(--brand);color:#fff;border:none;border-radius:var(--rm);padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:'Figtree',sans-serif;transition:background .15s}
+.btn-top:active{background:var(--brand-d)}
+.topbar-date{font-size:13px;color:var(--t3)}
+
+/* ─── CONTENT AREA ─── */
+.content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+
+/* ─── SCREENS ─── */
+.screen{display:none;flex-direction:column;gap:20px}
+.screen.active{display:flex}
+
+/* ─── STAT CARDS ─── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;display:flex;flex-direction:column;gap:4px}
+.stat-card.highlight{background:#111;border-color:#111}
+.stat-n{font-size:32px;font-weight:700;line-height:1;letter-spacing:-1px}
+.stat-l{font-size:12px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.04em}
+.stat-card.ok .stat-n{color:var(--ok)}
+.stat-card.warn .stat-n{color:var(--warn)}
+.stat-card.danger .stat-n{color:var(--danger)}
+.stat-card.highlight .stat-n{color:#fff}
+.stat-card.highlight .stat-l{color:rgba(255,255,255,0.4)}
+.stat-trend{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* ─── SECTION HEADERS ─── */
+.sec-head{display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-size:14px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+.sec-actions{display:flex;gap:8px}
+
+/* ─── FILTER TABS ─── */
+.filter-tabs{display:flex;gap:4px;background:var(--surface3);border-radius:var(--rm);padding:4px}
+.ftab{background:transparent;border:none;border-radius:var(--rs);padding:7px 16px;font-size:13px;font-weight:500;color:var(--t3);cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s;white-space:nowrap}
+.ftab.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,0.08)}
+.ftab .count{font-size:11px;background:var(--brand);color:#fff;border-radius:99px;padding:1px 6px;margin-left:5px}
+.ftab.active .count{background:var(--brand)}
+
+/* ─── VEHICLE GRID ─── */
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+
+/* ─── VEHICLE CARD ─── */
+.vcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:box-shadow .2s,border-color .2s;position:relative}
+.vcard:hover{box-shadow:var(--shadow);border-color:var(--border2)}
+.vcard.late{border-left:3px solid var(--danger)}
+.vcard.done{border-left:3px solid var(--ok)}
+.vcard-stripe{height:4px;background:var(--surface3)}
+.vcard-stripe.aguardando{background:var(--surface3)}
+.vcard-stripe.andamento{background:linear-gradient(90deg,var(--warn),var(--brand-mid))}
+.vcard-stripe.lixamento{background:linear-gradient(90deg,#7B5EA7,#A87CC8)}
+.vcard-stripe.pintura{background:linear-gradient(90deg,#1677B8,#41A5E8)}
+.vcard-stripe.finalizado{background:linear-gradient(90deg,var(--ok),#34C464)}
+.vcard-body{padding:16px}
+.vcard-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.vcard-name{font-size:16px;font-weight:700;line-height:1.2}
+.vcard-vehicle{font-size:13px;color:var(--t2);margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0}
+.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.badge.warn{background:var(--warn-bg);color:var(--warn)}
+.badge.danger{background:var(--danger-bg);color:var(--danger)}
+.badge.info{background:var(--info-bg);color:var(--info)}
+.badge.gray{background:var(--surface3);color:var(--t2)}
+.badge.purple{background:#F0EAF8;color:#6B3FA0}
+.badge.blue{background:#E8F3FC;color:#1A6FA8}
+.badge.brand{background:var(--brand-l);color:var(--brand-d)}
+.vcard-progress{margin-bottom:12px}
+.progress-bar{height:5px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;transition:width .5s}
+.progress-fill.ok{background:var(--ok)}
+.progress-fill.warn{background:var(--brand)}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-top:4px}
+.vcard-meta{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.vmeta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--t3)}
+.vmeta-item.late{color:var(--danger);font-weight:600}
+.vcard-svc-preview{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;min-height:24px}
+.svc-pip{font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px 8px;color:var(--t2)}
+.svc-pip.done{background:var(--ok-bg);border-color:transparent;color:var(--ok)}
+.svc-pip.active{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
+.vcard-actions{display:flex;gap:7px}
+.btn-card-primary{flex:1;background:var(--brand);color:#fff;border:none;border-radius:var(--rm);padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
+.btn-card-primary:active{background:var(--brand-d)}
+.btn-card-sec{background:var(--surface2);color:var(--t1);border:1px solid var(--border);border-radius:var(--rm);padding:10px 13px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Figtree',sans-serif;display:flex;align-items:center;gap:5px;transition:background .15s;white-space:nowrap}
+.btn-card-sec:active{background:var(--surface3)}
+
+/* ─── EMPTY STATE ─── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;gap:12px}
+.empty-icon{font-size:48px;opacity:.4}
+.empty-t{font-size:17px;font-weight:600;color:var(--t2)}
+.empty-s{font-size:14px;color:var(--t3);max-width:280px;line-height:1.5}
+
+/* ─── MODAL OVERLAY ─── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+@media(min-width:640px){.overlay{align-items:center}}
+.sheet{background:var(--surface);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0px);max-height:92vh;overflow-y:auto;animation:sheetUp .25s cubic-bezier(.32,.72,0,1)}
+@media(min-width:640px){.sheet{border-radius:var(--r);max-height:88vh}}
+@keyframes sheetUp{from{transform:translateY(48px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheet-drag{width:44px;height:4px;background:var(--border2);border-radius:99px;margin:12px auto 0}
+.sheet-header{padding:16px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sheet-title{font-size:17px;font-weight:700}
+.btn-close{background:var(--surface2);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--t2);flex-shrink:0}
+.btn-close:active{background:var(--surface3)}
+.sheet-body{padding:20px}
+
+/* ─── FORM ELEMENTS ─── */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--t2);margin-bottom:6px}
+.form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--rm);font-size:15px;font-family:'Figtree',sans-serif;color:var(--t1);background:var(--surface);transition:border-color .15s;outline:none}
+.form-input:focus{border-color:var(--brand)}
+.form-input::placeholder{color:var(--t3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-hint{font-size:11px;color:var(--t3);margin-top:4px}
+.btn-submit{width:100%;background:var(--brand);color:#fff;border:none;border-radius:var(--rm);padding:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;margin-top:8px;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-submit:active{background:var(--brand-d)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--t2);border-radius:var(--rm);padding:11px 18px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
+.btn-ghost:hover{border-color:var(--border2);color:var(--t1)}
+
+/* ─── STATUS PICKER ─── */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.status-opt{border:2px solid var(--border);background:var(--surface);border-radius:var(--r);padding:16px 12px;cursor:pointer;text-align:left;font-family:'Figtree',sans-serif;transition:all .15s;position:relative}
+.status-opt:active{transform:scale(.98)}
+.status-opt.sel{border-color:var(--brand);background:var(--brand-l)}
+.status-opt .s-icon{font-size:26px;margin-bottom:8px;display:block;line-height:1}
+.status-opt .s-name{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.status-opt .s-desc{font-size:11px;color:var(--t3)}
+.status-opt.sel .s-desc{color:var(--brand-d)}
+.status-opt .s-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .15s}
+.status-opt.sel .s-check{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* ─── WA PREVIEW ─── */
+.wa-box{background:#F0FAF4;border:1px solid #B8E8CA;border-radius:var(--rm);padding:14px 16px;margin:14px 0}
+.wa-box-label{font-size:11px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.wa-bubble{background:#fff;border-radius:12px 12px 12px 3px;padding:10px 14px;font-size:14px;line-height:1.5;color:#111;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.wa-actions{display:flex;gap:8px;margin-top:14px}
+.btn-wa{flex:1;background:#25D366;color:#fff;border:none;border-radius:var(--rm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-wa:active{opacity:.85}
+.btn-wa-sec{background:var(--surface2);color:var(--t2);border:1.5px solid var(--border);border-radius:var(--rm);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif;transition:all .15s}
+.btn-wa-sec:active{background:var(--surface3)}
+
+/* ─── SERVIÇOS SHEET ─── */
+.svc-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.svc-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rm);padding:13px 14px;display:flex;align-items:center;gap:12px}
+.svc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.svc-dot.done{background:var(--ok)}
+.svc-dot.active{background:var(--brand)}
+.svc-dot.pending{background:var(--border2)}
+.svc-info{flex:1;min-width:0}
+.svc-name{font-size:14px;font-weight:600;truncate:ellipsis;white-space:nowrap;overflow:hidden}
+.svc-meta{font-size:11px;color:var(--t3);margin-top:2px}
+.svc-meta.late{color:var(--danger);font-weight:600}
+.svc-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.btn-micro{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:5px 9px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Figtree',sans-serif;color:var(--t2);display:flex;align-items:center;gap:4px;transition:all .15s}
+.btn-micro:active{background:var(--surface3)}
+.btn-micro.wa{border-color:#B8E8CA;color:var(--ok);background:#F6FCF8}
+.btn-micro.done{border-color:var(--ok);color:var(--ok)}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.add-title{font-size:13px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
+
+/* ─── DETAIL VIEW ─── */
+.detail-hero{background:#111;border-radius:var(--r);padding:20px;margin-bottom:16px;position:relative;overflow:hidden}
+.detail-hero::before{content:'🚗';position:absolute;right:-10px;bottom:-16px;font-size:80px;opacity:.08}
+.detail-hero-name{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+.detail-hero-car{font-size:15px;color:rgba(255,255,255,0.55)}
+.detail-hero-foot{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.detail-timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:14px;padding-bottom:16px}
+.tl-item:last-child{padding-bottom:0}
+.tl-left{display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0}
+.tl-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;z-index:1}
+.tl-dot.done{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.tl-dot.active{border-color:var(--brand);background:var(--brand-l);color:var(--brand)}
+.tl-line{width:2px;flex:1;background:var(--border);margin-top:3px}
+.tl-line.done{background:var(--ok)}
+.tl-content{flex:1;padding-top:4px;padding-bottom:2px}
+.tl-svc-name{font-size:15px;font-weight:600;margin-bottom:3px}
+.tl-svc-sub{font-size:12px;color:var(--t3)}
+.tl-svc-sub.late{color:var(--danger);font-weight:600}
+
+/* ─── TOAST ─── */
+.toast-wrap{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#111;color:#fff;padding:12px 20px;border-radius:var(--rm);font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:8px;animation:toastIn .25s ease;pointer-events:auto}
+.toast.ok{background:#1B7A3E}
+.toast.danger{background:var(--danger)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── MOBILE NAV ─── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+.mnav-inner{display:flex}
+.mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 12px;gap:3px;border:none;background:none;color:var(--t3);font-size:10px;font-weight:500;font-family:'Figtree',sans-serif;cursor:pointer;transition:color .15s}
+.mnav-item.active{color:var(--brand)}
+.mnav-icon{font-size:20px;line-height:1}
+.fab{display:none;position:fixed;bottom:72px;right:20px;width:56px;height:56px;background:var(--brand);border:none;border-radius:50%;box-shadow:0 4px 16px rgba(232,97,10,.35);cursor:pointer;font-size:26px;color:#fff;z-index:99;transition:transform .15s}
+.fab:active{transform:scale(.93)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:767px){
+  .sidebar{display:none}
+  .topbar{padding:0 16px;height:52px}
+  .topbar-sub{display:none}
+  .topbar-date{display:none}
+  .btn-top{display:none}
+  .hamburger{display:flex}
+  .content{padding:14px;gap:14px;padding-bottom:80px}
+  .stats-row{grid-template-columns:1fr 1fr;gap:8px}
+  .stat-n{font-size:26px}
+  .vgrid{grid-template-columns:1fr;gap:10px}
+  .mobile-nav{display:block}
+  .fab{display:flex;align-items:center;justify-content:center}
+  .form-row{grid-template-columns:1fr}
+  .wa-actions{flex-direction:column}
+}
+@media(min-width:768px) and (max-width:1023px){
+  .sidebar{width:64px}
+  .sidebar-logo{padding:16px 14px}
+  .logo-text,.logo-sub{display:none}
+  .snav-item{padding:12px;justify-content:center}
+  .snav-item span:last-of-type{display:none}
+  .snav-badge{display:none}
+  .sidebar-user{padding:8px;justify-content:center}
+  .user-name,.user-role{display:none}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+
+/* ─── MISC ─── */
+.chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;cursor:pointer;font-family:'Figtree',sans-serif;color:var(--t2);background:var(--surface);transition:all .15s;font-weight:500}
+.chip.active{border-color:var(--brand);background:var(--brand-l);color:var(--brand-d)}
+.info-row{display:flex;flex-direction:column;gap:10px}
+.info-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--surface2);border-radius:var(--rm)}
+.info-label{font-size:12px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.03em}
+.info-value{font-size:14px;font-weight:600;color:var(--t1)}
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.section-card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-card-head h3{font-size:14px;font-weight:700;color:var(--t1)}
+.section-card-body{padding:16px 18px}
+.no-services{padding:20px;text-align:center;color:var(--t3);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- APP SHELL -->
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">🔧</div>
+        <div>
+          <div class="logo-text">OficinaPro</div>
+          <div class="logo-sub">Gestão de oficinas</div>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="snav-item active" onclick="goScreen('dash',this)">
+        <span class="snav-icon">🏠</span>
+        <span>Dashboard</span>
+        <span class="snav-badge" id="snav-count">3</span>
+      </button>
+      <button class="snav-item" onclick="goScreen('veiculos',this)">
+        <span class="snav-icon">🚗</span>
+        <span>Veículos</span>
+      </button>
+      <button class="snav-item" onclick="goScreen('historico',this)">
+        <span class="snav-icon">📋</span>
+        <span>Histórico</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">OF</div>
+        <div>
+          <div class="user-name">Funilaria Silva</div>
+          <div class="user-role">Responsável</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="toggleMobileMenu()">☰</button>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-sub" id="topbar-sub">Visão geral de hoje</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="topbar-date"></div>
+        <button class="btn-top" onclick="openSheet('sheet-novo')">+ Novo veículo</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ════ SCREEN: DASHBOARD ════ -->
+      <div class="screen active" id="screen-dash">
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card highlight">
+            <div class="stat-n" id="st-total">4</div>
+            <div class="stat-l">Em atendimento</div>
+            <div class="stat-trend" style="color:rgba(255,255,255,.3)">carros na oficina</div>
+          </div>
+          <div class="stat-card warn">
+            <div class="stat-n" id="st-andamento">3</div>
+            <div class="stat-l">Em andamento</div>
+            <div class="stat-trend">serviços ativos</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-n" id="st-atrasado">1</div>
+            <div class="stat-l">Atrasados</div>
+            <div class="stat-trend">precisam de atenção</div>
+          </div>
+          <div class="stat-card ok">
+            <div class="stat-n" id="st-prontos">1</div>
+            <div class="stat-l">Prontos hoje</div>
+            <div class="stat-trend">aguardando retirada</div>
+          </div>
+        </div>
+
+        <!-- Veículos atrasados (destaque) -->
+        <div id="late-section" style="display:none">
+          <div class="sec-head" style="margin-bottom:10px">
+            <div class="sec-title" style="color:var(--danger)">⚠️ Atenção — Atrasados</div>
+          </div>
+          <div class="vgrid" id="late-cards"></div>
+        </div>
+
+        <!-- Lista principal -->
+        <div>
+          <div class="sec-head" style="margin-bottom:12px">
+            <div class="sec-title">Veículos em atendimento</div>
+            <div class="sec-actions">
+              <div class="filter-tabs">
+                <button class="ftab active" onclick="setFilter('todos',this)">Todos <span class="count" id="fc-todos">4</span></button>
+                <button class="ftab" onclick="setFilter('andamento',this)">Em andamento</button>
+                <button class="ftab" onclick="setFilter('aguardando',this)">Aguardando</button>
+                <button class="ftab" onclick="setFilter('finalizado',this)">Prontos</button>
+              </div>
+            </div>
+          </div>
+          <div class="vgrid" id="cards-main"></div>
+        </div>
+
+      </div><!-- /screen-dash -->
+
+      <!-- ════ SCREEN: VEÍCULOS (mesma lista expandida) ════ -->
+      <div class="screen" id="screen-veiculos">
+        <div class="sec-head">
+          <div class="sec-title">Todos os veículos</div>
+          <button class="btn-top" style="font-size:13px;padding:8px 16px" onclick="openSheet('sheet-novo')">+ Novo veículo</button>
+        </div>
+        <div class="filter-tabs" style="background:var(--surface3);border-radius:var(--rm);padding:4px;width:fit-content">
+          <button class="ftab active" onclick="setFilter('todos',this)">Todos</button>
+          <button class="ftab" onclick="setFilter('andamento',this)">Em andamento</button>
+          <button class="ftab" onclick="setFilter('aguardando',this)">Aguardando</button>
+          <button class="ftab" onclick="setFilter('finalizado',this)">Prontos</button>
+        </div>
+        <div class="vgrid" id="cards-veiculos"></div>
+      </div>
+
+      <!-- ════ SCREEN: HISTÓRICO ════ -->
+      <div class="screen" id="screen-historico">
+        <div class="sec-head">
+          <div class="sec-title">Histórico de veículos</div>
+        </div>
+        <div class="vgrid" id="cards-hist"></div>
+        <div class="empty" id="hist-empty" style="display:none">
+          <div class="empty-icon">📋</div>
+          <div class="empty-t">Nenhum veículo finalizado</div>
+          <div class="empty-s">Veículos marcados como entregues aparecerão aqui.</div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- ── MOBILE BOTTOM NAV ── -->
+<div class="mobile-nav">
+  <div class="mnav-inner">
+    <button class="mnav-item active" id="mnav-dash" onclick="goScreen('dash',this,true)">
+      <div class="mnav-icon">🏠</div>Dashboard
+    </button>
+    <button class="mnav-item" id="mnav-veiculos" onclick="goScreen('veiculos',this,true)">
+      <div class="mnav-icon">🚗</div>Veículos
+    </button>
+    <button class="mnav-item" id="mnav-historico" onclick="goScreen('historico',this,true)">
+      <div class="mnav-icon">📋</div>Histórico
+    </button>
+  </div>
+</div>
+
+<!-- FAB mobile -->
+<button class="fab" onclick="openSheet('sheet-novo')" title="Adicionar veículo">+</button>
+
+<!-- ════════════════════════════
+     SHEET: NOVO VEÍCULO
+════════════════════════════ -->
+<div class="overlay" id="sheet-novo" onclick="overlayClose(event,'sheet-novo')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">Cadastrar veículo</div>
+      <button class="btn-close" onclick="closeSheet('sheet-novo')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="form-group">
+        <label class="form-label">Nome do cliente *</label>
+        <input class="form-input" id="f-nome" placeholder="Ex: João da Silva" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">WhatsApp *</label>
+        <input class="form-input" id="f-wpp" placeholder="(11) 99999-9999" type="tel" autocomplete="off">
+        <div class="form-hint">Número com DDD, apenas números</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Veículo *</label>
+        <input class="form-input" id="f-car" placeholder="Ex: Gol Prata 2018">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Placa</label>
+          <input class="form-input" id="f-placa" placeholder="ABC-1234" style="text-transform:uppercase">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de serviço</label>
+          <input class="form-input" id="f-tipo" placeholder="Ex: Funilaria">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data de entrada</label>
+          <input class="form-input" id="f-inicio" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Previsão de entrega</label>
+          <input class="form-input" id="f-prazo" type="date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observações</label>
+        <input class="form-input" id="f-obs" placeholder="Detalhes adicionais (opcional)">
+      </div>
+      <button class="btn-submit" onclick="salvarVeiculo()">
+        <span>🚗</span> Salvar e iniciar atendimento
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SHEET: ATUALIZAR STATUS
+════════════════════════════ -->
+<div class="overlay" id="sheet-status" onclick="overlayClose(event,'sheet-status')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-header">
+      <div>
+        <div class="sheet-title">Atualizar status</div>
+        <div style="font-size:13px;color:var(--t3);margin-top:2px" id="status-sheet-sub"></div>
+      </div>
+      <button class="btn-close" onclick="closeSheet('sheet-status')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="status-grid" id="status-grid"></div>
+      <div class="wa-box" id="wa-preview-box" style="display:none">
+        <div class="wa-box-label">💬 Mensagem para o cliente</div>
+        <div class="wa-bubble" id="wa-preview-text"></div>
+      </div>
+      <div class="wa-actions">
+        <button class="btn-wa" id="btn-confirmar-status" onclick="confirmarStatus()" disabled>
+          <span>💬</span> Confirmar e enviar no WhatsApp
+        </button>
+        <button class="btn-wa-sec" id="btn-so-status" onclick="soAtualizarStatus()">
+          Só atualizar, sem WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SHEET: SERVIÇOS DO VEÍCULO
+════════════════════════════ -->
+<div class="overlay" id="sheet-servicos" onclick="overlayClose(event,'sheet-servicos')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-header">
+      <div>
+        <div class="sheet-title" id="svc-title">Serviços</div>
+        <div style="font-size:13px;color:var(--t3);margin-top:2px" id="svc-sub"></div>
+      </div>
+      <button class="btn-close" onclick="closeSheet('sheet-servicos')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="svc-list" id="svc-list"></div>
+
+      <div class="divider"></div>
+      <div class="add-title">+ Adicionar serviço</div>
+
+      <div class="form-group">
+        <label class="form-label">Nome do serviço *</label>
+        <input class="form-input" id="svc-nome" placeholder="Ex: Pintura do capô">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data início</label>
+          <input class="form-input" id="svc-inicio" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prazo previsto</label>
+          <input class="form-input" id="svc-prazo" type="date">
+        </div>
+      </div>
+
+      <!-- Templates rápidos -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:12px;color:var(--t3);margin-bottom:8px;font-weight:600">Atalhos rápidos:</div>
+        <div class="chip-row" id="svc-chips"></div>
+      </div>
+
+      <button class="btn-submit" style="margin-top:0" onclick="adicionarServico()">
+        Adicionar serviço
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SHEET: DETALHE DO VEÍCULO
+════════════════════════════ -->
+<div class="overlay" id="sheet-detalhe" onclick="overlayClose(event,'sheet-detalhe')">
+  <div class="sheet" style="max-width:640px">
+    <div class="sheet-drag"></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="det-title">Detalhes</div>
+      <button class="btn-close" onclick="closeSheet('sheet-detalhe')">✕</button>
+    </div>
+    <div class="sheet-body" id="det-body"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SHEET: ENVIAR FOTO
+════════════════════════════ -->
+<div class="overlay" id="sheet-foto" onclick="overlayClose(event,'sheet-foto')">
+  <div class="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-header">
+      <div class="sheet-title">Enviar foto ao cliente</div>
+      <button class="btn-close" onclick="closeSheet('sheet-foto')">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div style="background:var(--surface2);border:2px dashed var(--border2);border-radius:var(--r);padding:32px;text-align:center;margin-bottom:16px;cursor:pointer" onclick="document.getElementById('foto-input').click()">
+        <div style="font-size:32px;margin-bottom:8px">📷</div>
+        <div style="font-size:15px;font-weight:600;color:var(--t2)">Toque para tirar ou escolher foto</div>
+        <div style="font-size:12px;color:var(--t3);margin-top:4px">A imagem será enviada via WhatsApp</div>
+        <input type="file" id="foto-input" accept="image/*" capture="environment" style="display:none" onchange="previewFoto(event)">
+      </div>
+      <img id="foto-preview" style="display:none;width:100%;border-radius:var(--rm);margin-bottom:16px;max-height:240px;object-fit:cover">
+      <div class="form-group">
+        <label class="form-label">Mensagem junto à foto</label>
+        <input class="form-input" id="foto-msg" value="Atualização do seu veículo 👇">
+      </div>
+      <button class="btn-wa" onclick="enviarFoto()">
+        <span>💬</span> Abrir WhatsApp e enviar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+// DADOS
+// ════════════════════════════════════════
+
+const STATUS = [
+  { id:'aguardando', icon:'🕐', name:'Aguardando início',  color:'gray',   msg: n => `Olá, ${n}! Seu carro chegou à nossa oficina e está na fila de atendimento. Em breve iniciamos o serviço! 🚗` },
+  { id:'andamento',  icon:'🔩', name:'Em andamento',       color:'warn',   msg: n => `Olá, ${n}! O serviço do seu carro está em andamento agora. Você será notificado a cada etapa! 🔧` },
+  { id:'lixamento',  icon:'⚙️', name:'Lixamento',          color:'purple', msg: n => `Olá, ${n}! Seu carro está na etapa de lixamento. Tudo certo por aqui! 🛠️` },
+  { id:'pintura',    icon:'🎨', name:'Pintura',             color:'blue',   msg: n => `Olá, ${n}! Seu carro entrou na etapa de pintura. Em breve ficará como novo! 🎨` },
+  { id:'finalizado', icon:'✅', name:'Pronto para retirar', color:'ok',     msg: n => `Olá, ${n}! Seu carro está *pronto* e pode ser retirado quando quiser. Foi um prazer! 🙌` },
+];
+
+const SVC_TEMPLATES = ['Lixamento geral','Pintura completa','Pintura do capô','Massa corrida','Polimento','Funilaria lateral','Troca de para-choque','Acabamento final'];
+
+let veiculos = [
+  { id:1, nome:'João Silva',    wpp:'5511999990001', car:'Gol Prata 2018',       placa:'GHT-2341', tipo:'Funilaria', inicio:'2025-07-14', prazo:'2025-07-18', status:'pintura',   obs:'Batida lateral esquerda',
+    servicos:[
+      {id:1,nome:'Lixamento geral',    inicio:'2025-07-14',prazo:'2025-07-15',status:'finalizado'},
+      {id:2,nome:'Massa corrida',       inicio:'2025-07-15',prazo:'2025-07-16',status:'finalizado'},
+      {id:3,nome:'Pintura do capô',     inicio:'2025-07-16',prazo:'2025-07-18',status:'andamento'},
+      {id:4,nome:'Acabamento final',    inicio:'2025-07-18',prazo:'2025-07-19',status:'aguardando'},
+    ]},
+  { id:2, nome:'Maria Costa',   wpp:'5511999990002', car:'Palio Vermelho 2020',  placa:'AXB-9812', tipo:'Pintura', inicio:'2025-07-15', prazo:'2025-07-17', status:'andamento',  obs:'',
+    servicos:[
+      {id:1,nome:'Pintura lateral',inicio:'2025-07-15',prazo:'2025-07-17',status:'andamento'},
+    ]},
+  { id:3, nome:'Pedro Alves',   wpp:'5511999990003', car:'HB20 Branco 2022',    placa:'MNB-5544', tipo:'Funilaria', inicio:'2025-07-13', prazo:'2025-07-16', status:'lixamento', obs:'Amassado dianteiro',
+    servicos:[
+      {id:1,nome:'Funilaria dianteira',inicio:'2025-07-13',prazo:'2025-07-15',status:'finalizado'},
+      {id:2,nome:'Lixamento',inicio:'2025-07-15',prazo:'2025-07-16',status:'andamento'},
+      {id:3,nome:'Pintura',inicio:'2025-07-16',prazo:'2025-07-17',status:'aguardando'},
+    ]},
+  { id:4, nome:'Ana Rodrigues', wpp:'5511999990004', car:'Corolla Prata 2021',  placa:'PQR-1122', tipo:'Polimento', inicio:'2025-07-16', prazo:'2025-07-17', status:'finalizado', obs:'',
+    servicos:[
+      {id:1,nome:'Polimento completo',inicio:'2025-07-16',prazo:'2025-07-17',status:'finalizado'},
+    ]},
+];
+
+let currentVid = null;
+let currentStatusSel = null;
+let currentFilter = 'todos';
+let fotoVid = null;
+
+// ════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════
+
+function today(){ return new Date().toISOString().split('T')[0] }
+
+function fmtDate(d){
+  if(!d) return '—';
+  const [y,m,day]=d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function isLate(v){
+  return v.prazo && v.prazo < today() && v.status !== 'finalizado' && v.status !== 'entregue';
+}
+
+function isSvcLate(s){
+  return s.prazo && s.prazo < today() && s.status !== 'finalizado';
+}
+
+function getStatus(id){ return STATUS.find(s=>s.id===id)||STATUS[0] }
+
+function wppNum(n){ const c=n.replace(/\D/g,''); return c.startsWith('55')?c:'55'+c }
+
+function toast(msg, type=''){
+  const w=document.getElementById('toast-wrap');
+  const el=document.createElement('div');
+  el.className='toast'+(type?' '+type:'');
+  el.textContent=msg;
+  w.appendChild(el);
+  setTimeout(()=>el.style.opacity='0',2500);
+  setTimeout(()=>el.remove(),2800);
+}
+
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+
+function goScreen(name, btn, isMobile=false){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+
+  if(isMobile){
+    document.querySelectorAll('.mnav-item').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // sync sidebar
+    document.querySelectorAll('.snav-item').forEach(b=>b.classList.remove('active'));
+  } else {
+    document.querySelectorAll('.snav-item').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // sync mobile nav
+    document.querySelectorAll('.mnav-item').forEach(b=>b.classList.remove('active'));
+    const mBtn=document.getElementById('mnav-'+name);
+    if(mBtn) mBtn.classList.add('active');
+  }
+
+  const titles={dash:'Dashboard',veiculos:'Veículos',historico:'Histórico'};
+  const subs={dash:'Visão geral de hoje',veiculos:'Todos os veículos em atendimento',historico:'Veículos finalizados'};
+  document.getElementById('topbar-title').textContent=titles[name]||name;
+  document.getElementById('topbar-sub').textContent=subs[name]||'';
+
+  if(name==='veiculos') renderVeiculos();
+  if(name==='historico') renderHistorico();
+}
+
+function toggleMobileMenu(){ /* futuro drawer */ }
+
+// ════════════════════════════════════════
+// RENDER CARDS
+// ════════════════════════════════════════
+
+function buildCard(v){
+  const st=getStatus(v.status);
+  const late=isLate(v);
+  const svcs=v.servicos||[];
+  const done=svcs.filter(s=>s.status==='finalizado').length;
+  const pct=svcs.length?Math.round((done/svcs.length)*100):0;
+  const pctClass=pct===100?'ok':'warn';
+
+  // service pips (máx 4 + overflow)
+  const maxPips=4;
+  const pipsHtml=svcs.slice(0,maxPips).map(s=>{
+    const cls=s.status==='finalizado'?'done':s.status==='andamento'?'active':'';
+    return `<span class="svc-pip ${cls}">${s.status==='finalizado'?'✓':s.status==='andamento'?'▶':''} ${s.nome}</span>`;
+  }).join('')+(svcs.length>maxPips?`<span class="svc-pip">+${svcs.length-maxPips}</span>`:'');
+
+  return `
+<div class="vcard ${late?'late':v.status==='finalizado'?'done':''}" onclick="openDetalhe(${v.id})">
+  <div class="vcard-stripe ${v.status}"></div>
+  <div class="vcard-body">
+    <div class="vcard-head">
+      <div>
+        <div class="vcard-name">${v.nome}</div>
+        <div class="vcard-vehicle">${v.car}${v.placa?' · '+v.placa:''}</div>
+      </div>
+      <span class="badge ${late?'danger':st.color}">${st.icon} ${st.name}</span>
+    </div>
+
+    ${svcs.length?`
+    <div class="vcard-progress">
+      <div class="progress-bar"><div class="progress-fill ${pctClass}" style="width:${pct}%"></div></div>
+      <div class="progress-label">
+        <span>${done} de ${svcs.length} serviço${svcs.length>1?'s':''}</span>
+        <span>${pct}%</span>
+      </div>
+    </div>`:``}
+
+    <div class="vcard-meta">
+      <div class="vmeta-item ${late?'late':''}">
+        ${late?'⚠️':'📅'} ${late?'Atrasado — ':'Entrega: '}${fmtDate(v.prazo)}
+      </div>
+      ${v.tipo?`<div class="vmeta-item">🔨 ${v.tipo}</div>`:''}
+    </div>
+
+    ${pipsHtml?`<div class="vcard-svc-preview">${pipsHtml}</div>`:''}
+
+    <div class="vcard-actions" onclick="event.stopPropagation()">
+      <button class="btn-card-primary" onclick="openStatus(${v.id})">
+        ✏️ Atualizar status
+      </button>
+      <button class="btn-card-sec" onclick="openServicos(${v.id})">
+        🔧 Serviços
+      </button>
+      <button class="btn-card-sec" onclick="openFoto(${v.id})" title="Enviar foto">
+        📷
+      </button>
+    </div>
+  </div>
+</div>`;
+}
+
+function getFiltered(){
+  if(currentFilter==='todos') return veiculos.filter(v=>v.status!=='entregue');
+  if(currentFilter==='andamento') return veiculos.filter(v=>!['finalizado','entregue','aguardando'].includes(v.status));
+  if(currentFilter==='aguardando') return veiculos.filter(v=>v.status==='aguardando');
+  if(currentFilter==='finalizado') return veiculos.filter(v=>v.status==='finalizado');
+  return veiculos;
+}
+
+function renderDash(){
+  const ativos=veiculos.filter(v=>!['entregue'].includes(v.status));
+  const andamento=veiculos.filter(v=>!['finalizado','entregue','aguardando'].includes(v.status));
+  const late=ativos.filter(isLate);
+  const prontos=veiculos.filter(v=>v.status==='finalizado');
+
+  document.getElementById('st-total').textContent=ativos.length;
+  document.getElementById('st-andamento').textContent=andamento.length;
+  document.getElementById('st-atrasado').textContent=late.length;
+  document.getElementById('st-prontos').textContent=prontos.length;
+  document.getElementById('snav-count').textContent=ativos.length;
+  document.getElementById('fc-todos').textContent=ativos.length;
+
+  // late section
+  const lateSection=document.getElementById('late-section');
+  if(late.length){
+    lateSection.style.display='block';
+    document.getElementById('late-cards').innerHTML=late.map(buildCard).join('');
+  } else {
+    lateSection.style.display='none';
+  }
+
+  const filtered=getFiltered();
+  const main=document.getElementById('cards-main');
+  if(!filtered.length){
+    main.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🚗</div><div class="empty-t">Nenhum veículo aqui</div><div class="empty-s">Toque em "+ Novo veículo" para cadastrar o primeiro.</div></div>`;
+  } else {
+    main.innerHTML=filtered.map(buildCard).join('');
+  }
+}
+
+function renderVeiculos(){
+  const filtered=getFiltered();
+  const el=document.getElementById('cards-veiculos');
+  el.innerHTML=filtered.length?filtered.map(buildCard).join(''):`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🚗</div><div class="empty-t">Nenhum veículo</div><div class="empty-s">Adicione o primeiro veículo para começar.</div></div>`;
+}
+
+function renderHistorico(){
+  const hist=veiculos.filter(v=>v.status==='entregue');
+  const el=document.getElementById('cards-hist');
+  const empty=document.getElementById('hist-empty');
+  if(!hist.length){ el.innerHTML=''; empty.style.display='flex'; return; }
+  empty.style.display='none';
+  el.innerHTML=hist.map(buildCard).join('');
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDash();
+  renderVeiculos();
+}
+
+// ════════════════════════════════════════
+// SHEETS
+// ════════════════════════════════════════
+
+function openSheet(id){ document.getElementById(id).classList.add('open') }
+function closeSheet(id){ document.getElementById(id).classList.remove('open') }
+function overlayClose(e,id){ if(e.target===document.getElementById(id)) closeSheet(id) }
+
+// ════════════════════════════════════════
+// NOVO VEÍCULO
+// ════════════════════════════════════════
+
+function salvarVeiculo(){
+  const nome=document.getElementById('f-nome').value.trim();
+  const wpp=document.getElementById('f-wpp').value.trim();
+  const car=document.getElementById('f-car').value.trim();
+  if(!nome||!car||!wpp){ toast('Preencha nome, veículo e WhatsApp','danger'); return; }
+
+  const novo={
+    id: Date.now(),
+    nome, wpp: wppNum(wpp),
+    car,
+    placa: document.getElementById('f-placa').value.trim().toUpperCase(),
+    tipo: document.getElementById('f-tipo').value.trim(),
+    inicio: document.getElementById('f-inicio').value||today(),
+    prazo: document.getElementById('f-prazo').value||'',
+    status:'aguardando',
+    obs: document.getElementById('f-obs').value.trim(),
+    servicos:[]
+  };
+
+  veiculos.unshift(novo);
+  closeSheet('sheet-novo');
+  ['f-nome','f-wpp','f-car','f-placa','f-tipo','f-prazo','f-obs'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-inicio').value=today();
+
+  renderDash();
+  toast('Veículo cadastrado com sucesso! 🚗','ok');
+
+  // Pergunta se quer mandar WA de boas-vindas
+  setTimeout(()=>{
+    if(confirm('Enviar mensagem de boas-vindas para '+nome+' no WhatsApp?')){
+      const msg=encodeURIComponent(`Olá, ${nome}! 👋\n\nSeu veículo *${car}* foi cadastrado em nossa oficina e em breve iniciaremos o atendimento.\n\nVocê será notificado a cada atualização!\n\n— OficinaPro`);
+      window.open(`https://wa.me/${wppNum(wpp)}?text=${msg}`,'_blank');
+    }
+  },400);
+}
+
+// ════════════════════════════════════════
+// STATUS
+// ════════════════════════════════════════
+
+function openStatus(vid){
+  currentVid=vid; currentStatusSel=null;
+  const v=veiculos.find(x=>x.id===vid);
+  document.getElementById('status-sheet-sub').textContent=v.car+' · '+v.nome;
+
+  const grid=document.getElementById('status-grid');
+  grid.innerHTML=STATUS.map(s=>`
+    <div class="status-opt ${v.status===s.id?'sel':''}" onclick="selectStatus('${s.id}',this)">
+      <div class="s-check">${v.status===s.id?'✓':''}</div>
+      <span class="s-icon">${s.icon}</span>
+      <div class="s-name">${s.name}</div>
+      <div class="s-desc">${s.msg('').split('\n')[0].substring(0,40)}...</div>
+    </div>`).join('');
+
+  // se já tinha status, pré-seleciona e mostra preview
+  if(v.status){ selectStatusById(v.status) }
+
+  document.getElementById('btn-confirmar-status').disabled=true;
+  openSheet('sheet-status');
+}
+
+function selectStatusById(sid){
+  const v=veiculos.find(x=>x.id===currentVid);
+  if(!v) return;
+  currentStatusSel=sid;
+  const s=getStatus(sid);
+  const msg=s.msg(v.nome)+`\n\n— ${v.car} | OficinaPro`;
+  document.getElementById('wa-preview-text').textContent=msg;
+  document.getElementById('wa-preview-box').style.display='block';
+  document.getElementById('btn-confirmar-status').disabled=false;
+}
+
+function selectStatus(sid, el){
+  document.querySelectorAll('.status-opt').forEach(b=>{ b.classList.remove('sel'); b.querySelector('.s-check').textContent=''; });
+  el.classList.add('sel'); el.querySelector('.s-check').textContent='✓';
+  selectStatusById(sid);
+}
+
+function confirmarStatus(){
+  if(!currentStatusSel) return;
+  const v=veiculos.find(x=>x.id===currentVid);
+  v.status=currentStatusSel;
+  const s=getStatus(currentStatusSel);
+  const msg=encodeURIComponent(s.msg(v.nome)+`\n\n— ${v.car} | OficinaPro`);
+  window.open(`https://wa.me/${v.wpp}?text=${msg}`,'_blank');
+  closeSheet('sheet-status');
+  renderDash();
+  toast('Status atualizado e WhatsApp aberto! 💬','ok');
+}
+
+function soAtualizarStatus(){
+  if(!currentStatusSel){ toast('Selecione um status','danger'); return; }
+  const v=veiculos.find(x=>x.id===currentVid);
+  v.status=currentStatusSel;
+  closeSheet('sheet-status');
+  renderDash();
+  toast('Status atualizado ✓');
+}
+
+// ════════════════════════════════════════
+// SERVIÇOS
+// ════════════════════════════════════════
+
+function openServicos(vid){
+  currentVid=vid;
+  const v=veiculos.find(x=>x.id===vid);
+  document.getElementById('svc-title').textContent='Serviços — '+v.car;
+  document.getElementById('svc-sub').textContent=v.nome;
+  document.getElementById('svc-inicio').value=today();
+
+  // chips de atalho
+  document.getElementById('svc-chips').innerHTML=SVC_TEMPLATES.map(t=>
+    `<button class="chip" onclick="usarTemplate('${t}')">${t}</button>`).join('');
+
+  renderSvcList(v);
+  openSheet('sheet-servicos');
+}
+
+function renderSvcList(v){
+  const el=document.getElementById('svc-list');
+  const svcs=v.servicos||[];
+  if(!svcs.length){
+    el.innerHTML='<div class="no-services">Nenhum serviço cadastrado. Adicione abaixo.</div>';
+    return;
+  }
+  el.innerHTML=svcs.map((s,i)=>{
+    const late=isSvcLate(s);
+    const dot=s.status==='finalizado'?'done':s.status==='andamento'?'active':'pending';
+    return `<div class="svc-item">
+      <div class="svc-dot ${dot}"></div>
+      <div class="svc-info">
+        <div class="svc-name">${s.nome}</div>
+        <div class="svc-meta ${late?'late':''}">
+          ${late?'⚠️ Atrasado — ':''}${fmtDate(s.inicio)} → ${fmtDate(s.prazo)}
+        </div>
+      </div>
+      <div class="svc-right">
+        <button class="btn-micro wa" onclick="notifSvc(${v.id},${i})" title="Notificar cliente">💬</button>
+        <button class="btn-micro ${s.status==='finalizado'?'done':''}" onclick="toggleSvc(${v.id},${i})" title="${s.status==='finalizado'?'Reabrir':'Concluir'}">
+          ${s.status==='finalizado'?'↩ Reabrir':'✓ Concluir'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function usarTemplate(nome){
+  document.getElementById('svc-nome').value=nome;
+  document.getElementById('svc-nome').focus();
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.classList.toggle('active',c.textContent===nome);
+  });
+}
+
+function adicionarServico(){
+  const nome=document.getElementById('svc-nome').value.trim();
+  if(!nome){ toast('Digite o nome do serviço','danger'); return; }
+  const v=veiculos.find(x=>x.id===currentVid);
+  v.servicos.push({
+    id: Date.now(),
+    nome,
+    inicio: document.getElementById('svc-inicio').value||today(),
+    prazo: document.getElementById('svc-prazo').value||'',
+    status:'aguardando'
+  });
+  document.getElementById('svc-nome').value='';
+  document.getElementById('svc-prazo').value='';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  renderSvcList(v);
+  renderDash();
+  toast('Serviço adicionado ✓');
+}
+
+function toggleSvc(vid,idx){
+  const v=veiculos.find(x=>x.id===vid);
+  const s=v.servicos[idx];
+  const wasFinished=s.status==='finalizado';
+  s.status=wasFinished?'aguardando':'finalizado';
+  renderSvcList(v);
+  renderDash();
+  if(!wasFinished){
+    // Pergunta se quer notificar
+    setTimeout(()=>{
+      if(confirm(`Serviço "${s.nome}" concluído!\n\nNotificar ${v.nome} no WhatsApp?`)){
+        const msg=encodeURIComponent(`Olá, ${v.nome}! ✅\n\nO serviço *${s.nome}* do seu *${v.car}* foi concluído!\n\n— OficinaPro`);
+        window.open(`https://wa.me/${v.wpp}?text=${msg}`,'_blank');
+      }
+    },300);
+  }
+}
+
+function notifSvc(vid,idx){
+  const v=veiculos.find(x=>x.id===vid);
+  const s=v.servicos[idx];
+  const icone=s.status==='finalizado'?'✅':s.status==='andamento'?'🔩':'🕐';
+  const statusLabel=s.status==='finalizado'?'concluído':s.status==='andamento'?'em andamento':'aguardando início';
+  const late=isSvcLate(s);
+  const extraMsg=late?`\n\n⚠️ *Pedimos desculpas pelo atraso.* Estamos trabalhando para finalizar o mais rápido possível.`:'';
+  const msg=encodeURIComponent(
+    `Olá, ${v.nome}! ${icone}\n\n` +
+    `Atualização do seu *${v.car}*:\n\n` +
+    `Serviço: *${s.nome}*\n` +
+    `Status: *${statusLabel}*\n` +
+    `Prazo: *${fmtDate(s.prazo)}*` +
+    extraMsg +
+    `\n\n— OficinaPro`
+  );
+  window.open(`https://wa.me/${v.wpp}?text=${msg}`,'_blank');
+}
+
+// ════════════════════════════════════════
+// DETALHE
+// ════════════════════════════════════════
+
+function openDetalhe(vid){
+  const v=veiculos.find(x=>x.id===vid);
+  const st=getStatus(v.status);
+  const late=isLate(v);
+  const svcs=v.servicos||[];
+
+  document.getElementById('det-title').textContent=v.car;
+
+  const svcTimeline=svcs.length?svcs.map((s,i)=>{
+    const done=s.status==='finalizado';
+    const active=s.status==='andamento';
+    const isLast=i===svcs.length-1;
+    const sLate=isSvcLate(s);
+    return `<div class="tl-item">
+      <div class="tl-left">
+        <div class="tl-dot ${done?'done':active?'active':''}">${done?'✓':active?'▶':'○'}</div>
+        ${!isLast?`<div class="tl-line ${done?'done':''}"></div>`:''}
+      </div>
+      <div class="tl-content" style="flex:1">
+        <div class="tl-svc-name">${s.nome}</div>
+        <div class="tl-svc-sub ${sLate?'late':''}">
+          ${sLate?'⚠️ Atrasado — ':''}${fmtDate(s.inicio)} → ${fmtDate(s.prazo)}
+        </div>
+      </div>
+    </div>`;
+  }).join(''):`<div style="color:var(--t3);font-size:13px;padding:8px 0">Nenhum serviço cadastrado.</div>`;
+
+  document.getElementById('det-body').innerHTML=`
+    <div class="detail-hero">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span class="badge ${late?'danger':st.color}" style="font-size:12px">${st.icon} ${st.name}</span>
+        ${late?`<span class="badge danger" style="font-size:11px">⚠️ Atrasado</span>`:''}
+      </div>
+      <div class="detail-hero-name">${v.nome}</div>
+      <div class="detail-hero-car">${v.car}${v.placa?' · '+v.placa:''}</div>
+      <div class="detail-hero-foot">
+        <div style="font-size:12px;color:rgba(255,255,255,.4)">📅 Entrega: <span style="color:${late?'#FC8181':'rgba(255,255,255,.7)'};font-weight:600">${fmtDate(v.prazo)}</span></div>
+        <div style="font-size:12px;color:rgba(255,255,255,.4)">Entrada: ${fmtDate(v.inicio)}</div>
+      </div>
+    </div>
+
+    <div class="info-row" style="margin-bottom:16px">
+      <div class="info-item">
+        <span class="info-label">WhatsApp</span>
+        <span class="info-value">${v.wpp}</span>
+      </div>
+      ${v.tipo?`<div class="info-item"><span class="info-label">Serviço</span><span class="info-value">${v.tipo}</span></div>`:''}
+      ${v.obs?`<div class="info-item"><span class="info-label">Obs</span><span class="info-value">${v.obs}</span></div>`:''}
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px">Etapas do serviço</div>
+      <div class="detail-timeline">${svcTimeline}</div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <button class="btn-submit" style="margin-top:0;flex:1" onclick="closeSheet('sheet-detalhe');openStatus(${v.id})">
+        ✏️ Atualizar status
+      </button>
+      <button class="btn-ghost" onclick="closeSheet('sheet-detalhe');openServicos(${v.id})">🔧</button>
+      <button class="btn-ghost" onclick="closeSheet('sheet-detalhe');openFoto(${v.id})">📷</button>
+    </div>
+
+    ${v.status==='finalizado'?`
+    <button style="width:100%;background:transparent;border:1.5px solid var(--ok);color:var(--ok);border-radius:var(--rm);padding:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px" onclick="marcarEntregue(${v.id})">
+      ✅ Marcar como entregue ao cliente
+    </button>`:''}
+
+    <div style="margin-top:14px;padding:12px 14px;background:var(--surface2);border-radius:var(--rm);text-align:center">
+      <div style="font-size:11px;color:var(--t3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Link de acompanhamento do cliente</div>
+      <div style="font-size:12px;color:var(--info);word-break:break-all;margin-bottom:8px">${window.location.origin}/status.html?id=${v.id}</div>
+      <button style="background:var(--info-bg);color:var(--info);border:none;border-radius:var(--rs);padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif" onclick="compartilharLink(${v.id})">📋 Copiar e enviar link</button>
+    </div>
+  `;
+
+  openSheet('sheet-detalhe');
+}
+
+function marcarEntregue(vid){
+  const v=veiculos.find(x=>x.id===vid);
+  if(!confirm('Marcar como entregue? O veículo irá para o histórico.')) return;
+  v.status='entregue';
+  closeSheet('sheet-detalhe');
+  renderDash();
+  toast('Veículo marcado como entregue ✓','ok');
+  const msg=encodeURIComponent(`Olá, ${v.nome}! 🎉\n\nSeu *${v.car}* foi marcado como *entregue*. Obrigado pela confiança!\n\nQualquer dúvida, estamos à disposição.\n\n— OficinaPro`);
+  setTimeout(()=>{ if(confirm('Enviar mensagem de agradecimento no WhatsApp?')) window.open(`https://wa.me/${v.wpp}?text=${msg}`,'_blank'); },400);
+}
+
+function compartilharLink(vid){
+  const url=`${window.location.origin}/status.html?id=${vid}`;
+  const v=veiculos.find(x=>x.id===vid);
+  if(navigator.clipboard){ navigator.clipboard.writeText(url); toast('Link copiado! ✓'); }
+  const msg=encodeURIComponent(`Olá, ${v.nome}! Acompanhe o status do seu *${v.car}* em tempo real:\n\n${url}\n\n— OficinaPro`);
+  setTimeout(()=>window.open(`https://wa.me/${v.wpp}?text=${msg}`,'_blank'),300);
+}
+
+// ════════════════════════════════════════
+// FOTO
+// ════════════════════════════════════════
+
+function openFoto(vid){
+  fotoVid=vid;
+  document.getElementById('foto-preview').style.display='none';
+  document.getElementById('foto-input').value='';
+  openSheet('sheet-foto');
+}
+
+function previewFoto(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=document.getElementById('foto-preview');
+    img.src=ev.target.result;
+    img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function enviarFoto(){
+  const v=veiculos.find(x=>x.id===fotoVid);
+  const msg=document.getElementById('foto-msg').value||'Atualização do seu veículo 👇';
+  const full=encodeURIComponent(`${msg}\n\n— ${v.car} | OficinaPro`);
+  window.open(`https://wa.me/${v.wpp}?text=${full}`,'_blank');
+  toast('WhatsApp aberto — adicione a foto na conversa 📷');
+  closeSheet('sheet-foto');
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+
+document.getElementById('topbar-date').textContent=
+  new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+document.getElementById('f-inicio').value=today();
+document.getElementById('svc-inicio').value=today();
+
+renderDash();
+</script>
+</body>
+</html>
