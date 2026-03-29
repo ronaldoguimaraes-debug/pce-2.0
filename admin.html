@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OficinaPro — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Figtree',sans-serif;font-size:15px}
+:root{
+  --brand:#E8610A;--brand-d:#C44E05;--brand-l:#FEF0E7;
+  --ok:#1B7A3E;--ok-bg:#E6F5EC;--ok-border:#A8D5B5;
+  --warn:#A05C00;--warn-bg:#FFF3DC;--warn-border:#F0CC7A;
+  --danger:#C0281E;--danger-bg:#FDECEA;--danger-border:#F0AAAA;
+  --info:#1355A0;--info-bg:#E8F0FB;
+  --purple:#5B3FA0;--purple-bg:#F0EAF8;
+  --surface:#fff;--surface2:#F4F2EE;--surface3:#EAE7E2;
+  --border:#E2DDD7;--border2:#CBC5BE;
+  --t1:#111;--t2:#555048;--t3:#97918A;
+  --r:12px;--rm:8px;
+}
+body{background:var(--surface2);color:var(--t1)}
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:230px;flex-shrink:0;background:#111;display:flex;flex-direction:column}
+.sb-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sb-logo-icon{width:36px;height:36px;background:var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.sb-logo-text{font-size:16px;font-weight:700;color:#fff}
+.sb-logo-badge{font-size:10px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);padding:2px 7px;border-radius:99px;margin-left:auto;font-weight:600}
+.sb-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.08em;padding:14px 10px 6px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--rm);cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.45);font-size:13px;font-weight:500;font-family:'Figtree',sans-serif;width:100%;text-align:left;transition:all .15s}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.sb-item.active{background:var(--brand);color:#fff}
+.sb-item .ic{font-size:16px;width:20px;text-align:center}
+.sb-item .badge{margin-left:auto;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px}
+.sb-item.active .badge{background:rgba(255,255,255,.2);color:#fff}
+.sb-item.alert-item{color:rgba(232,97,10,.7)}
+.sb-footer{padding:12px 8px;border-top:1px solid rgba(255,255,255,.07)}
+.sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.sb-uname{font-size:13px;font-weight:500;color:rgba(255,255,255,.65)}
+.sb-logout{width:100%;background:transparent;border:none;color:rgba(255,255,255,.25);font-size:12px;font-family:'Figtree',sans-serif;text-align:left;padding:6px 12px;cursor:pointer;border-radius:var(--rm)}
+.sb-logout:hover{color:rgba(255,255,255,.5)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);height:58px;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.tb-title{font-size:18px;font-weight:700}
+.tb-sub{font-size:13px;color:var(--t3);margin-left:10px}
+.btn-primary{background:var(--brand);color:#fff;border:none;border-radius:var(--rm);padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif;display:flex;align-items:center;gap:6px;transition:background .15s}
+.btn-primary:active{background:var(--brand-d)}
+.content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+.screen{display:none;flex-direction:column;gap:20px}
+.screen.active{display:flex}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.stat.dark{background:#111;border-color:#111}
+.stat-n{font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1}
+.stat-l{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+.stat.ok .stat-n{color:var(--ok)}
+.stat.warn .stat-n{color:var(--warn)}
+.stat.danger .stat-n{color:var(--danger)}
+.stat.purple .stat-n{color:var(--purple)}
+.stat.dark .stat-n{color:#fff}
+.stat.dark .stat-l{color:rgba(255,255,255,.35)}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sec-title{font-size:13px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.05em}
+.search-wrap{position:relative}
+.search-input{padding:7px 12px 7px 34px;border:1px solid var(--border);border-radius:var(--rm);font-size:13px;font-family:'Figtree',sans-serif;color:var(--t1);background:var(--surface);outline:none;width:220px;transition:border-color .15s}
+.search-input:focus{border-color:var(--brand)}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--t3);pointer-events:none}
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+thead tr{background:var(--surface2);border-bottom:1px solid var(--border)}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
+thead th:last-child{text-align:right}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#FAFAF8}
+tbody tr.row-danger{background:#FFF8F8}
+tbody tr.row-warn{background:#FFFBF0}
+tbody td{padding:13px 14px;font-size:13px;vertical-align:middle}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.badge.warn{background:var(--warn-bg);color:var(--warn)}
+.badge.danger{background:var(--danger-bg);color:var(--danger)}
+.badge.purple{background:var(--purple-bg);color:var(--purple)}
+.badge.gray{background:var(--surface3);color:var(--t2)}
+.contract-wrap{display:flex;flex-direction:column;gap:3px;min-width:100px}
+.contract-bar{height:4px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.contract-fill{height:100%;border-radius:99px}
+.contract-fill.ok{background:var(--ok)}
+.contract-fill.warn{background:var(--warn)}
+.contract-fill.danger{background:var(--danger)}
+.contract-label{display:flex;justify-content:space-between;font-size:10px;color:var(--t3)}
+.churn-dot{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.churn-dot .dot{width:8px;height:8px;border-radius:50%}
+.churn-dot.ok{color:var(--ok)} .churn-dot.ok .dot{background:var(--ok)}
+.churn-dot.warn{color:var(--warn)} .churn-dot.warn .dot{background:var(--warn);animation:pw 1.5s ease infinite}
+.churn-dot.danger{color:var(--danger)} .churn-dot.danger .dot{background:var(--danger);animation:pd 1s ease infinite}
+@keyframes pw{0%,100%{box-shadow:0 0 0 0 rgba(160,92,0,.4)}50%{box-shadow:0 0 0 4px rgba(160,92,0,0)}}
+@keyframes pd{0%,100%{box-shadow:0 0 0 0 rgba(192,40,30,.5)}50%{box-shadow:0 0 0 5px rgba(192,40,30,0)}}
+.btn-micro{border:1px solid var(--border);background:var(--surface);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Figtree',sans-serif;color:var(--t2);transition:all .12s;white-space:nowrap;margin-left:4px}
+.btn-micro.ok{border-color:var(--ok-border);color:var(--ok);background:var(--ok-bg)}
+.btn-micro.danger{border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}
+.td-right{text-align:right}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:flex-end;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+.drawer{background:var(--surface);width:460px;height:100%;overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,.15);animation:dIn .25s ease}
+@keyframes dIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}
+.drawer-head{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1}
+.drawer-title{font-size:17px;font-weight:700}
+.btn-close{background:var(--surface2);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--t2)}
+.drawer-body{padding:20px 24px 32px;display:flex;flex-direction:column;gap:16px}
+.drawer-section{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-tile{background:var(--surface2);border-radius:var(--rm);padding:12px 14px}
+.info-tile-l{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;margin-bottom:3px}
+.info-tile-v{font-size:14px;font-weight:600}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:12px;font-weight:600;color:var(--t2)}
+.form-input{padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--rm);font-size:14px;font-family:'Figtree',sans-serif;color:var(--t1);outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--brand)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-hint{font-size:11px;color:var(--t3);margin-top:2px}
+.btn-submit{background:var(--brand);color:#fff;border:none;border-radius:var(--rm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btn-submit:active{background:var(--brand-d)}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--t2);border-radius:var(--rm);padding:11px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Figtree',sans-serif;text-align:center}
+.btn-ghost.ok{border-color:var(--ok-border);color:var(--ok);background:var(--ok-bg)}
+.btn-ghost.danger{border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}
+.alert-banner{padding:10px 14px;border-radius:var(--rm);font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.alert-banner.danger{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.alert-banner.warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.divider{height:1px;background:var(--border)}
+.toast-wrap{position:fixed;top:20px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:#111;color:#fff;padding:11px 18px;border-radius:var(--rm);font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:8px;animation:tIn .2s ease}
+.toast.ok{background:var(--ok)}
+.toast.danger{background:var(--danger)}
+@keyframes tIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-row td{text-align:center;padding:40px;color:var(--t3);font-size:13px}
+.loading-screen{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px}
+.loading-icon{font-size:40px;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-icon">🔧</div>
+  <div style="font-size:15px;color:#555">Carregando painel admin...</div>
+</div>
+
+<div class="shell" id="app" style="display:none">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">🔧</div>
+      <div class="sb-logo-text">OficinaPro</div>
+      <div class="sb-logo-badge">Admin</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Visão geral</div>
+      <button class="sb-item active" onclick="goScreen('dash',this)"><span class="ic">📊</span> Dashboard</button>
+      <button class="sb-item" onclick="goScreen('oficinas',this)"><span class="ic">🔧</span> Oficinas<span class="badge" id="sb-total">0</span></button>
+      <div class="sb-section">Alertas</div>
+      <button class="sb-item alert-item" onclick="goScreen('expirando',this)"><span class="ic">⏰</span> Expirando<span class="badge" id="sb-exp">0</span></button>
+      <button class="sb-item alert-item" onclick="goScreen('inadimplentes',this)"><span class="ic">⚠️</span> Inadimplentes<span class="badge" id="sb-inad">0</span></button>
+      <button class="sb-item alert-item" onclick="goScreen('churn',this)"><span class="ic">📉</span> Risco de Churn<span class="badge" id="sb-churn">0</span></button>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user"><div class="sb-avatar">AD</div><div><div class="sb-uname">Administrador</div></div></div>
+      <button class="sb-logout" onclick="logout()">↩ Sair</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <div class="tb-title" id="tb-title">Dashboard</div>
+        <div class="tb-sub" id="tb-sub">Visão geral das oficinas</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div id="tb-date" style="font-size:12px;color:var(--t3)"></div>
+        <button class="btn-primary" onclick="openDrawer('nova')">+ Nova oficina</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="screen active" id="screen-dash">
+        <div class="stats-grid">
+          <div class="stat dark"><div class="stat-n" id="s-total">0</div><div class="stat-l">Total de oficinas</div></div>
+          <div class="stat ok"><div class="stat-n" id="s-ativas">0</div><div class="stat-l">Ativas</div></div>
+          <div class="stat warn"><div class="stat-n" id="s-expirando">0</div><div class="stat-l">Expirando em 7d</div></div>
+          <div class="stat danger"><div class="stat-n" id="s-bloqueadas">0</div><div class="stat-l">Bloqueadas</div></div>
+          <div class="stat purple"><div class="stat-n" id="s-carros">0</div><div class="stat-l">Carros ativos</div></div>
+        </div>
+        <div id="churn-alertas"></div>
+        <div>
+          <div class="sec-head" style="margin-bottom:12px">
+            <div class="sec-title">Todas as oficinas</div>
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input class="search-input" placeholder="Buscar..." oninput="busca=this.value;renderTabela('tabela-body',getOficinas())" id="search">
+            </div>
+          </div>
+          <div class="table-card"><div class="table-wrap"><table>
+            <thead><tr><th>Oficina</th><th>Status</th><th>Contrato</th><th>Último acesso</th><th>Churn</th><th>Carros</th><th style="text-align:right">Ações</th></tr></thead>
+            <tbody id="tabela-body"></tbody>
+          </table></div></div>
+        </div>
+      </div>
+
+      <!-- OFICINAS -->
+      <div class="screen" id="screen-oficinas">
+        <div class="sec-head"><div class="sec-title">Gestão de oficinas</div><button class="btn-primary" onclick="openDrawer('nova')">+ Nova oficina</button></div>
+        <div class="table-card"><div class="table-wrap"><table>
+          <thead><tr><th>Oficina</th><th>Status</th><th>Contrato</th><th>Último acesso</th><th>Churn</th><th>Carros</th><th style="text-align:right">Ações</th></tr></thead>
+          <tbody id="tabela-body-2"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- EXPIRANDO -->
+      <div class="screen" id="screen-expirando">
+        <div class="sec-head"><div class="sec-title">⏰ Expirando nos próximos 7 dias</div></div>
+        <div class="table-card"><div class="table-wrap"><table>
+          <thead><tr><th>Oficina</th><th>Status</th><th>Contrato</th><th>Último acesso</th><th>Churn</th><th>Carros</th><th style="text-align:right">Ações</th></tr></thead>
+          <tbody id="tabela-body-exp"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- INADIMPLENTES -->
+      <div class="screen" id="screen-inadimplentes">
+        <div class="sec-head"><div class="sec-title">⚠️ Inadimplentes</div></div>
+        <div class="table-card"><div class="table-wrap"><table>
+          <thead><tr><th>Oficina</th><th>Status</th><th>Contrato</th><th>Último acesso</th><th>Churn</th><th>Carros</th><th style="text-align:right">Ações</th></tr></thead>
+          <tbody id="tabela-body-inad"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- CHURN -->
+      <div class="screen" id="screen-churn">
+        <div class="sec-head"><div class="sec-title">📉 Risco de churn — sem acesso há 7+ dias</div></div>
+        <div class="table-card"><div class="table-wrap"><table>
+          <thead><tr><th>Oficina</th><th>Status</th><th>Contrato</th><th>Último acesso</th><th>Churn</th><th>Carros</th><th style="text-align:right">Ações</th></tr></thead>
+          <tbody id="tabela-body-churn"></tbody>
+        </table></div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER: NOVA OFICINA -->
+<div class="overlay" id="drawer-nova" onclick="overlayClose(event,'drawer-nova')">
+  <div class="drawer">
+    <div class="drawer-head"><div class="drawer-title">Nova oficina</div><button class="btn-close" onclick="closeDrawer('drawer-nova')">✕</button></div>
+    <div class="drawer-body">
+      <div style="background:var(--info-bg);border:1px solid #9DBDE8;border-radius:var(--rm);padding:12px;font-size:13px;color:var(--info)">
+        💡 Crie a conta da oficina aqui. Ela receberá acesso imediato com o e-mail e senha definidos.
+      </div>
+      <div class="form-group"><label class="form-label">Nome da oficina *</label><input class="form-input" id="n-nome" placeholder="Ex: Funilaria Silva"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="n-tel" placeholder="(11) 99999-9999"></div>
+        <div class="form-group"><label class="form-label">Cidade</label><input class="form-input" id="n-cidade" placeholder="São Paulo"></div>
+      </div>
+      <div class="form-group"><label class="form-label">E-mail de acesso *</label><input class="form-input" id="n-email" type="email" placeholder="oficina@email.com"></div>
+      <div style="background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:var(--rm);padding:10px 14px;font-size:13px;color:var(--ok)">
+        🔐 Senha padrão gerada automaticamente: <strong>OficinaPro@2026</strong><br>
+        <span style="font-size:11px;opacity:.8">A oficina será obrigada a trocar no primeiro acesso.</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Dias de acesso</label><input class="form-input" id="n-dias" type="number" value="60" min="1"></div>
+        <div class="form-group"><label class="form-label">Data de início</label><input class="form-input" id="n-inicio" type="date"></div>
+      </div>
+      <button class="btn-submit" id="btn-criar" onclick="criarOficina()">✓ Criar oficina e liberar acesso</button>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER: DETALHE -->
+<div class="overlay" id="drawer-det" onclick="overlayClose(event,'drawer-det')">
+  <div class="drawer">
+    <div class="drawer-head"><div class="drawer-title" id="det-nome">Oficina</div><button class="btn-close" onclick="closeDrawer('drawer-det')">✕</button></div>
+    <div class="drawer-body" id="det-body"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const sb = supabase.createClient(
+  'https://ovoccbtgvpjhhaklmabs.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92b2NjYnRndnBqaGhha2xtYWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MDU2MDYsImV4cCI6MjA5MDM4MTYwNn0.0PC7AeEphla2mRjUxbG5Pgg17nZI8Kqadj_ZMcYHxws'
+);
+const ADMIN = 'admin@oficinapro.com.br';
+
+let oficinas = [];
+let busca = '';
+
+function today(){ return new Date().toISOString().split('T')[0] }
+function fmtDate(d){ if(!d)return'—'; const[y,m,day]=d.split('-'); return`${day}/${m}/${y}` }
+function diffDays(a, b=today()){ return Math.round((new Date(a)-new Date(b))/86400000) }
+function daysFromNow(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0] }
+
+function fmtRelativo(d){
+  if(!d) return 'Nunca';
+  const dias=Math.round((new Date(today())-new Date(d.split('T')[0]))/86400000);
+  if(dias===0)return'Hoje'; if(dias===1)return'Ontem';
+  if(dias<=7)return`${dias} dias atrás`; if(dias<=30)return`${Math.round(dias/7)} sem. atrás`;
+  return fmtDate(d.split('T')[0]);
+}
+
+function churnRisco(o){
+  if(o.status!=='ativa') return {nivel:'danger',label:'Crítico'};
+  const d=o.ultimo_acesso?Math.round((new Date(today())-new Date(o.ultimo_acesso.split('T')[0]))/86400000):999;
+  if(d>=14) return {nivel:'danger',label:'Crítico'};
+  if(d>=7)  return {nivel:'warn',  label:'Alto'};
+  if(d>=3)  return {nivel:'warn',  label:'Médio'};
+  return {nivel:'ok',label:'Baixo'};
+}
+
+function getStatusInfo(o){
+  const dr=diffDays(o.expira);
+  if(o.status==='inadimplente') return {cor:'danger',label:'Inadimplente'};
+  if(dr<0) return {cor:'danger',label:'Expirada'};
+  if(dr<=7) return {cor:'warn',label:`Expira em ${dr}d`};
+  return {cor:'ok',label:'Ativa'};
+}
+
+function contratoBar(o){
+  if(!o.inicio||!o.expira) return {pct:0,restante:0,cls:'gray'};
+  const total=diffDays(o.expira,o.inicio);
+  const usado=diffDays(today(),o.inicio);
+  const pct=Math.min(100,Math.max(0,Math.round((usado/total)*100)));
+  const restante=diffDays(o.expira);
+  const cls=restante<0?'danger':restante<=7?'warn':'ok';
+  return {pct,restante,cls};
+}
+
+function toast(msg,type=''){
+  const w=document.getElementById('toast-wrap');
+  const el=document.createElement('div');
+  el.className='toast'+(type?' '+type:'');
+  el.textContent=msg;
+  w.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';},3500);
+  setTimeout(()=>el.remove(),3800);
+}
+
+function openDrawer(tipo){ document.getElementById('drawer-'+tipo).classList.add('open') }
+function closeDrawer(id){ document.getElementById(id).classList.remove('open') }
+function overlayClose(e,id){ if(e.target===document.getElementById(id)) closeDrawer(id) }
+
+function goScreen(name,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const t={dash:['Dashboard','Visão geral'],oficinas:['Oficinas','Todas as oficinas'],expirando:['Expirando','Contratos próximos do vencimento'],inadimplentes:['Inadimplentes','Pagamento em atraso'],churn:['Risco de Churn','Baixa frequência de uso']};
+  const [ti,su]=t[name]||['',''];
+  document.getElementById('tb-title').textContent=ti;
+  document.getElementById('tb-sub').textContent=su;
+}
+
+// ─── RENDER ───
+function buildRow(o){
+  const st=getStatusInfo(o); const cr=churnRisco(o); const cb=contratoBar(o);
+  const rc=st.cor==='danger'?'row-danger':st.cor==='warn'?'row-warn':'';
+  return`<tr class="${rc}" onclick="openDetalhe('${o.id}')">
+    <td><div style="font-weight:600">${o.nome}</div><div style="font-size:11px;color:var(--t3);margin-top:1px">${o.cidade||''} · ${o.email||''}</div></td>
+    <td><span class="badge ${st.cor}">${st.label}</span></td>
+    <td><div class="contract-wrap"><div class="contract-bar"><div class="contract-fill ${cb.cls}" style="width:${cb.pct}%"></div></div><div class="contract-label"><span>${fmtDate(o.inicio)}</span><span style="color:${cb.restante<0?'var(--danger)':cb.restante<=7?'var(--warn)':'var(--t3)'}">${cb.restante<0?'Expirado':cb.restante+'d'}</span></div></div></td>
+    <td><div style="font-size:13px">${fmtRelativo(o.ultimo_acesso)}</div></td>
+    <td><div class="churn-dot ${cr.nivel}"><div class="dot"></div>${cr.label}</div></td>
+    <td style="font-weight:600">${o.carros||0}</td>
+    <td class="td-right" onclick="event.stopPropagation()">
+      ${o.status==='ativa'&&diffDays(o.expira)>=0
+        ?`<button class="btn-micro danger" onclick="marcarInadimplente('${o.id}')">Inadimplente</button>`
+        :`<button class="btn-micro ok" onclick="reativar('${o.id}')">Reativar</button>`}
+      <button class="btn-micro" onclick="openDetalhe('${o.id}')">Ver</button>
+    </td>
+  </tr>`;
+}
+
+function getOficinas(){
+  if(!busca) return oficinas;
+  const b=busca.toLowerCase();
+  return oficinas.filter(o=>(o.nome||'').toLowerCase().includes(b)||(o.email||'').toLowerCase().includes(b));
+}
+
+function renderTabela(id, lista){
+  const el=document.getElementById(id);
+  if(!lista.length){ el.innerHTML='<tr class="empty-row"><td colspan="7">Nenhuma oficina encontrada.</td></tr>'; return; }
+  el.innerHTML=lista.map(buildRow).join('');
+}
+
+function calcStats(){
+  const total=oficinas.length;
+  const ativas=oficinas.filter(o=>o.status==='ativa'&&diffDays(o.expira)>=0).length;
+  const exp=oficinas.filter(o=>{const d=diffDays(o.expira);return d>=0&&d<=7&&o.status==='ativa';}).length;
+  const bloq=oficinas.filter(o=>o.status!=='ativa'||diffDays(o.expira)<0).length;
+  const carros=oficinas.reduce((s,o)=>s+(o.carros||0),0);
+  const churnAlto=oficinas.filter(o=>churnRisco(o).nivel!=='ok').length;
+
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-ativas').textContent=ativas;
+  document.getElementById('s-expirando').textContent=exp;
+  document.getElementById('s-bloqueadas').textContent=bloq;
+  document.getElementById('s-carros').textContent=carros;
+  document.getElementById('sb-total').textContent=total;
+  document.getElementById('sb-exp').textContent=exp;
+  document.getElementById('sb-inad').textContent=oficinas.filter(o=>o.status==='inadimplente').length;
+  document.getElementById('sb-churn').textContent=oficinas.filter(o=>{const d=o.ultimo_acesso?Math.round((new Date(today())-new Date(o.ultimo_acesso.split('T')[0]))/86400000):999;return d>=7&&o.status==='ativa';}).length;
+
+  const alertas=[];
+  oficinas.forEach(o=>{
+    const cr=churnRisco(o); const d=o.ultimo_acesso?Math.round((new Date(today())-new Date(o.ultimo_acesso.split('T')[0]))/86400000):999;
+    if(cr.nivel==='danger'&&o.status==='ativa'&&d>=7) alertas.push(`<div class="alert-banner danger">⚠️ <strong>${o.nome}</strong> — sem acesso há ${d} dias. Risco crítico de churn.</div>`);
+    else if(cr.nivel==='warn'&&o.status==='ativa') alertas.push(`<div class="alert-banner warn">📉 <strong>${o.nome}</strong> — baixa frequência (${fmtRelativo(o.ultimo_acesso)}).</div>`);
+  });
+  document.getElementById('churn-alertas').innerHTML=alertas.length?`<div style="display:flex;flex-direction:column;gap:8px">${alertas.join('')}</div>`:'';
+}
+
+function renderTodas(){
+  calcStats();
+  renderTabela('tabela-body', getOficinas());
+  renderTabela('tabela-body-2', oficinas);
+  renderTabela('tabela-body-exp', oficinas.filter(o=>{const d=diffDays(o.expira);return d>=0&&d<=7&&o.status==='ativa';}));
+  renderTabela('tabela-body-inad', oficinas.filter(o=>o.status==='inadimplente'));
+  renderTabela('tabela-body-churn', oficinas.filter(o=>{const d=o.ultimo_acesso?Math.round((new Date(today())-new Date(o.ultimo_acesso.split('T')[0]))/86400000):999;return d>=7&&o.status==='ativa';}));
+}
+
+// ─── CARREGAR ───
+async function carregarOficinas(){
+  const { data, error } = await sb.from('oficinas').select('*').order('created_at', {ascending:false});
+  if(error){ toast('Erro ao carregar: '+error.message,'danger'); return; }
+
+  // Conta carros para cada oficina
+  for(const o of data){
+    const { count } = await sb.from('veiculos').select('*',{count:'exact',head:true}).eq('oficina_id',o.id).neq('status','entregue');
+    o.carros = count||0;
+  }
+
+  oficinas = data;
+  renderTodas();
+}
+
+// ─── CRIAR OFICINA ───
+async function criarOficina(){
+  const nome=document.getElementById('n-nome').value.trim();
+  const email=document.getElementById('n-email').value.trim();
+  const senha='OficinaPro@2026';
+  if(!nome||!email){ toast('Preencha nome e e-mail','danger'); return; }
+
+  const btn=document.getElementById('btn-criar');
+  btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Criando...';
+
+  // 1. Cria usuário no Supabase Auth
+  const { data: authData, error: authErr } = await sb.auth.signUp({ email, password: senha });
+
+  if(authErr){
+    btn.disabled=false; btn.innerHTML='✓ Criar oficina e liberar acesso';
+    toast('Erro ao criar conta: '+authErr.message,'danger'); return;
+  }
+
+  const dias=parseInt(document.getElementById('n-dias').value)||60;
+  const inicio=document.getElementById('n-inicio').value||today();
+  const expiraDate=new Date(inicio); expiraDate.setDate(expiraDate.getDate()+dias);
+
+  // 2. Cria registro da oficina
+  const { error: ofErr } = await sb.from('oficinas').insert([{
+    user_id: authData.user.id,
+    nome,
+    email,
+    telefone: document.getElementById('n-tel').value.trim(),
+    cidade: document.getElementById('n-cidade').value.trim(),
+    status: 'ativa',
+    inicio,
+    expira: expiraDate.toISOString().split('T')[0]
+  }]);
+
+  btn.disabled=false; btn.innerHTML='✓ Criar oficina e liberar acesso';
+
+  if(ofErr){
+    toast('Usuário criado mas erro na oficina: '+ofErr.message,'danger'); return;
+  }
+
+  ['n-nome','n-tel','n-cidade','n-email','n-senha'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('n-dias').value='60';
+  closeDrawer('drawer-nova');
+  await carregarOficinas();
+  toast(`Oficina "${nome}" criada com acesso por ${dias} dias! ✓`,'ok');
+}
+
+// ─── AÇÕES ───
+async function marcarInadimplente(id){
+  const o=oficinas.find(x=>x.id===id);
+  if(!confirm(`Marcar "${o.nome}" como inadimplente?\nO acesso será bloqueado imediatamente.`)) return;
+  await sb.from('oficinas').update({status:'inadimplente'}).eq('id',id);
+  await carregarOficinas();
+  toast(`${o.nome} bloqueada por inadimplência.`,'danger');
+}
+
+async function reativar(id){
+  const o=oficinas.find(x=>x.id===id);
+  const novoExpira=daysFromNow(60);
+  if(!confirm(`Reativar "${o.nome}"?\nNovo período: 60 dias.`)) return;
+  await sb.from('oficinas').update({status:'ativa',expira:novoExpira,inicio:today()}).eq('id',id);
+  await carregarOficinas();
+  toast(`${o.nome} reativada por 60 dias.`,'ok');
+}
+
+async function renovar(id, dias){
+  const o=oficinas.find(x=>x.id===id);
+  const base=diffDays(o.expira)>0?o.expira:today();
+  const nova=new Date(base); nova.setDate(nova.getDate()+parseInt(dias));
+  await sb.from('oficinas').update({status:'ativa',expira:nova.toISOString().split('T')[0]}).eq('id',id);
+  await carregarOficinas();
+  closeDrawer('drawer-det');
+  toast(`Contrato de ${o.nome} renovado por ${dias} dias.`,'ok');
+}
+
+// ─── DETALHE ───
+function openDetalhe(id){
+  const o=oficinas.find(x=>x.id===id);
+  const st=getStatusInfo(o); const cr=churnRisco(o); const cb=contratoBar(o);
+  document.getElementById('det-nome').textContent=o.nome;
+  document.getElementById('det-body').innerHTML=`
+    ${st.cor!=='ok'?`<div class="alert-banner ${st.cor}">${st.cor==='danger'?'🔴':'🟡'} ${st.label}${cb.restante<0?' — expirado há '+Math.abs(cb.restante)+'d':''}</div>`:''}
+    ${cr.nivel==='danger'&&o.status==='ativa'?`<div class="alert-banner danger">📉 Risco crítico de churn</div>`:''}
+    <div>
+      <div class="drawer-section">Dados</div>
+      <div class="info-grid">
+        <div class="info-tile"><div class="info-tile-l">Status</div><div class="info-tile-v"><span class="badge ${st.cor}">${st.label}</span></div></div>
+        <div class="info-tile"><div class="info-tile-l">Carros ativos</div><div class="info-tile-v" style="font-size:20px;font-weight:700;color:var(--purple)">${o.carros||0}</div></div>
+        <div class="info-tile"><div class="info-tile-l">E-mail</div><div class="info-tile-v" style="font-size:12px">${o.email||'—'}</div></div>
+        <div class="info-tile"><div class="info-tile-l">Telefone</div><div class="info-tile-v">${o.telefone||'—'}</div></div>
+        <div class="info-tile"><div class="info-tile-l">Cidade</div><div class="info-tile-v">${o.cidade||'—'}</div></div>
+        <div class="info-tile"><div class="info-tile-l">Risco Churn</div><div class="info-tile-v"><span class="churn-dot ${cr.nivel}" style="display:inline-flex;align-items:center;gap:5px"><span class="dot"></span>${cr.label}</span></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="drawer-section">Contrato</div>
+      <div class="info-grid">
+        <div class="info-tile"><div class="info-tile-l">Início</div><div class="info-tile-v">${fmtDate(o.inicio)}</div></div>
+        <div class="info-tile"><div class="info-tile-l">Expira</div><div class="info-tile-v" style="color:${cb.restante<0?'var(--danger)':cb.restante<=7?'var(--warn)':'var(--t1)'}">${cb.restante<0?'Vencido':fmtDate(o.expira)}</div></div>
+        <div class="info-tile" style="grid-column:1/-1">
+          <div class="info-tile-l">Progresso</div>
+          <div style="margin-top:6px"><div class="contract-bar" style="height:6px"><div class="contract-fill ${cb.cls}" style="width:${cb.pct}%"></div></div><div class="contract-label" style="margin-top:4px"><span>${cb.pct}% utilizado</span><span>${cb.restante<0?Math.abs(cb.restante)+'d vencido':cb.restante+'d restantes'}</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="drawer-section">Último acesso</div>
+      <div style="font-size:15px;font-weight:500;padding:8px 0">${fmtRelativo(o.ultimo_acesso)}</div>
+    </div>
+    <div class="divider"></div>
+    <div class="drawer-section">Ações rápidas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn-ghost ok" onclick="renovar('${o.id}',30)">+30 dias</button>
+      <button class="btn-ghost ok" onclick="renovar('${o.id}',60)">+60 dias</button>
+      ${o.status==='ativa'
+        ?`<button class="btn-ghost danger" onclick="marcarInadimplente('${o.id}')">Inadimplente</button>`
+        :`<button class="btn-ghost ok" onclick="reativar('${o.id}')">Reativar</button>`}
+      <button class="btn-ghost" onclick="closeDrawer('drawer-det')">Fechar</button>
+    </div>`;
+  openDrawer('det');
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  window.location.href='login.html';
+}
+
+// ─── INIT ───
+(async()=>{
+  const { data:{ session } } = await sb.auth.getSession();
+  document.getElementById('loading-screen').style.display='none';
+  if(!session || session.user.email!==ADMIN){
+    window.location.href = session ? 'index.html' : 'login.html';
+    return;
+  }
+  document.getElementById('app').style.display='flex';
+  document.getElementById('tb-date').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
+  document.getElementById('n-inicio').value=today();
+  await carregarOficinas();
+})();
+</script>
+</body>
+</html>
